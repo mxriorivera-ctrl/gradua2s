@@ -1,0 +1,18 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tu foto – Gradua2s</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;flex-direction:column;align-items:center;gap:18px;padding:20px;background:#0c0c14;color:#fff;font-family:system-ui,sans-serif}
+h1{margin:0;font:600 22px Georgia,serif;letter-spacing:.04em}h1 i{color:#c8102e;font-style:normal}
+img{max-width:100%;max-height:70vh;border-radius:8px;box-shadow:0 10px 40px #0008}
+a.b{display:block;background:#c8102e;color:#fff;text-decoration:none;font-weight:700;padding:18px 36px;border-radius:14px;font-size:20px}
+p{opacity:.7}
+</style></head><body>
+<h1>Gradua<i>2</i>s</h1><div id="m"></div>
+<script>
+const u=new URLSearchParams(location.search).get('u');let ok=false;
+try{const h=new URL(u).hostname;ok=h.endsWith('.public.blob.vercel-storage.com')}catch(e){}
+const m=document.getElementById('m');
+if(ok){m.innerHTML='<img src="'+u+'" alt="Tu foto"><br><br><a class="b" href="'+u+'?download=1" download="gradua2s.jpg">DESCARGAR FOTO</a>';m.style.textAlign='center'}
+else m.innerHTML='<p>Este enlace no es válido.</p>';
+</script></body></html>
