@@ -1,0 +1,188 @@
+<!doctype html><html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Gradua2s – Espejo mágico</title>
+<style>
+:root{--red:#c8102e;--bg:#0c0c14;--fg:#fff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font-family:system-ui,'Segoe UI',sans-serif;overflow:hidden;user-select:none}
+.brand{position:fixed;top:14px;left:0;right:0;text-align:center;font:600 clamp(16px,2.2vh,26px) Georgia,serif;letter-spacing:.12em;opacity:.85;z-index:5}
+.brand i{color:var(--red);font-style:normal}
+.s{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2vh;padding:7vh 3vw 6vh;opacity:0;pointer-events:none;transition:opacity .5s}
+.s.on{opacity:1;pointer-events:auto}
+h1{margin:0;font-size:clamp(28px,5.4vh,66px);font-weight:300;letter-spacing:.02em;text-align:center}
+h1 b{font-weight:700}
+.stage{position:relative;flex:1;min-height:0;aspect-ratio:3/2;max-width:94vw;border-radius:18px;overflow:hidden;box-shadow:0 0 0 2px var(--red),0 20px 60px #000a}
+#v{width:100%;height:100%;object-fit:cover;background:#000}
+#v.mir{transform:scaleX(-1)}
+#cd{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:36vh;font-weight:800;text-shadow:0 0 40px #000;pointer-events:none}
+#cd.pop{animation:pop 1s ease-out}
+@keyframes pop{from{transform:scale(1.5);opacity:0}25%{opacity:1}to{transform:scale(.9);opacity:.9}}
+#prog{position:absolute;top:12px;left:0;right:0;text-align:center;font-size:clamp(18px,3vh,32px);font-weight:700;text-shadow:0 2px 12px #000}
+#fl{position:absolute;inset:0;background:#fff;opacity:0;pointer-events:none}
+#fl.on{animation:fl .35s ease-out}
+@keyframes fl{from{opacity:.9}to{opacity:0}}
+#th{position:absolute;bottom:10px;left:10px;display:flex;gap:8px}
+#th img{height:9vh;border-radius:6px;border:2px solid #fff;box-shadow:0 4px 14px #0008}
+.chips{display:flex;gap:1.6vw;align-items:center;flex-wrap:wrap;justify-content:center}
+.chips small{opacity:.7;font-size:clamp(14px,2.2vh,22px)}
+.chip{display:flex;align-items:center;gap:10px;background:#ffffff0d;color:#fff;border:2px solid #fff3;border-radius:16px;padding:1.1vh 1.8vw;font-size:clamp(15px,2.6vh,28px);font-weight:700;cursor:pointer;transition:.2s}
+.chip.on{background:var(--red);border-color:var(--red);box-shadow:0 6px 22px #c8102e66}
+.chip:disabled{opacity:.5}
+.mini{display:grid;grid-template-columns:1fr 1fr;gap:3px;width:3.4vh;height:3.4vh;min-width:22px;min-height:22px}
+.mini b{background:currentColor;border-radius:2px}
+.m1,.m2{grid-template-columns:1fr}.m3 b:first-child{grid-column:span 2}
+.btn{background:var(--red);color:#fff;border:0;border-radius:999px;font-weight:800;letter-spacing:.06em;font-size:clamp(22px,4vh,44px);padding:2vh 6vw;cursor:pointer;box-shadow:0 8px 30px #c8102e66;transition:transform .15s}
+.btn:active{transform:scale(.96)}.btn:disabled{opacity:.4}
+.btn.ghost{background:transparent;border:2px solid #fff4;box-shadow:none;font-size:clamp(16px,2.4vh,26px);padding:1.4vh 3vw}
+#err{background:#2a0a10;border:1px solid var(--red);padding:12px 18px;border-radius:12px;max-width:80vw;text-align:center}
+#tools{position:fixed;bottom:10px;right:12px;display:flex;gap:8px;opacity:.6;z-index:6}
+#tools select,#tools button{background:#1a1a24;color:#fff;border:1px solid #fff3;border-radius:8px;padding:6px 10px}
+.spin{width:90px;height:90px;border-radius:50%;border:6px solid #fff2;border-top-color:var(--red);animation:r 1s linear infinite}
+@keyframes r{to{transform:rotate(360deg)}}
+#proc p{font-size:clamp(20px,3.4vh,36px);font-weight:300}
+.res{display:flex;gap:4vw;align-items:center;justify-content:center;flex:1;min-height:0;width:100%}
+#ph{max-height:100%;max-width:58vw;object-fit:contain;border-radius:10px;box-shadow:0 20px 60px #000a}
+.side{display:flex;flex-direction:column;align-items:center;gap:2vh;text-align:center;max-width:32vw}
+.side h2{margin:0;font-size:clamp(26px,5vh,56px)}.side p{margin:0;opacity:.8;font-size:clamp(14px,2.4vh,26px)}
+#qr{background:#fff;padding:14px;border-radius:14px;line-height:0}
+#qr img,#qr canvas{width:min(26vh,26vw)!important;height:auto!important}
+#left{font-size:clamp(14px,2.2vh,22px);opacity:.7}
+@media(orientation:portrait){.res{flex-direction:column}#ph{max-width:90vw;max-height:48vh}.side{max-width:90vw}}
+</style></head><body>
+<div class="brand">GRADUA<i>2</i>S</div>
+
+<section id="home" class="s on">
+  <h1>Toma tu foto <b>acá</b></h1>
+  <div class="stage"><video id="v" class="mir" playsinline muted autoplay></video><div id="prog"></div><div id="cd"></div><div id="fl"></div><div id="th"></div></div>
+  <div id="err" hidden></div>
+  <div class="chips" id="chips"><small>Elige tu collage</small>
+    <button class="chip on" data-n="1"><span class="mini m1"><b></b></span>1 foto</button>
+    <button class="chip" data-n="2"><span class="mini m2"><b></b><b></b></span>2 fotos</button>
+    <button class="chip" data-n="3"><span class="mini m3"><b></b><b></b><b></b></span>3 fotos</button>
+    <button class="chip" data-n="4"><span class="mini m4"><b></b><b></b><b></b><b></b></span>4 fotos</button>
+  </div>
+  <button id="go" class="btn" disabled>TOMAR FOTO</button>
+</section>
+
+<section id="proc" class="s"><div class="spin"></div><p>Estamos preparando tu fotografía…</p></section>
+
+<section id="out" class="s">
+  <div class="res">
+    <img id="ph" alt="Tu foto">
+    <div class="side">
+      <h2>¡Tu foto está lista!</h2>
+      <div id="qr"></div>
+      <p id="qrmsg">Escanea el código QR para descargar tu fotografía</p>
+      <a id="dl" class="btn" download="gradua2s.jpg" style="text-decoration:none;text-align:center">DESCARGAR FOTO</a>
+      <span id="left"></span>
+      <button id="again" class="btn ghost">TOMAR OTRA FOTO</button>
+    </div>
+  </div>
+</section>
+
+<div id="tools"><button id="mir">Espejo: ON</button><select id="cams" title="Cámara"></select><button id="fs">Pantalla completa</button></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+// ===== CONFIGURACIÓN =====
+const CFG={countdown:4,between:2,resultSeconds:30,brand:'Gradua2s',maxSide:2400,cellMax:1400,
+  framePng:'' /* opcional: '/marco.png' (PNG transparente, se dibuja encima) */};
+// =========================
+const $=id=>document.getElementById(id),sleep=ms=>new Promise(r=>setTimeout(r,ms));
+let stream,tick,url,n=1,mirror=true;
+try{mirror=localStorage.getItem('g2s_mirror')!=='0'}catch(e){}
+const show=k=>document.querySelectorAll('.s').forEach(e=>e.classList.toggle('on',e.id===k));
+function applyMirror(){$('v').classList.toggle('mir',mirror);$('mir').textContent='Espejo: '+(mirror?'ON':'OFF');try{localStorage.setItem('g2s_mirror',mirror?'1':'0')}catch(e){}}
+$('mir').onclick=()=>{mirror=!mirror;applyMirror()};applyMirror();
+document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{n=+b.dataset.n;document.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b))});
+const lock=f=>{document.querySelectorAll('.chip').forEach(b=>b.disabled=f);$('mir').disabled=f};
+
+async function startCam(id){
+  if(stream)stream.getTracks().forEach(t=>t.stop());
+  try{
+    stream=await navigator.mediaDevices.getUserMedia({video:{deviceId:id?{exact:id}:undefined,width:{ideal:3840},height:{ideal:2160}},audio:false});
+    const v=$('v');v.srcObject=stream;await v.play();
+    const devs=(await navigator.mediaDevices.enumerateDevices()).filter(d=>d.kind==='videoinput');
+    $('cams').innerHTML=devs.map((d,i)=>`<option value="${d.deviceId}">${d.label||'Cámara '+(i+1)}</option>`).join('');
+    const cur=stream.getVideoTracks()[0].getSettings().deviceId;if(cur)$('cams').value=cur;
+    $('err').hidden=true;$('go').disabled=false;
+  }catch(e){
+    $('err').hidden=false;$('go').disabled=true;
+    $('err').textContent=!navigator.mediaDevices?'La cámara requiere HTTPS.':
+      e.name==='NotAllowedError'?'Permite el acceso a la cámara en el navegador y recarga.':
+      'No se encontró la cámara. Conéctala y selecciónala abajo a la derecha.';
+  }
+}
+$('cams').onchange=e=>startCam(e.target.value);
+navigator.mediaDevices&&(navigator.mediaDevices.ondevicechange=()=>startCam($('cams').value));
+$('fs').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen();
+
+function loadImg(src){return new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=no;i.src=src})}
+function grab(){ // toma un fotograma limpio (sin contador ni interfaz) respetando el modo espejo
+  const v=$('v'),s=Math.min(1,(n===1?CFG.maxSide:CFG.cellMax)/Math.max(v.videoWidth,v.videoHeight));
+  const c=document.createElement('canvas');c.width=Math.round(v.videoWidth*s);c.height=Math.round(v.videoHeight*s);
+  const x=c.getContext('2d');if(mirror){x.translate(c.width,0);x.scale(-1,1)}x.drawImage(v,0,0,c.width,c.height);return c;
+}
+function thumb(c){const t=document.createElement('canvas');t.width=240;t.height=Math.round(240*c.height/c.width);t.getContext('2d').drawImage(c,0,0,t.width,t.height);const i=new Image();i.src=t.toDataURL('image/jpeg',.7);return i}
+function layout(k,cw,ch,g){
+  if(k===1)return{r:[{x:0,y:0,w:cw,h:ch}],W:cw,H:ch};
+  if(k===2)return{r:[{x:0,y:0,w:cw,h:ch},{x:0,y:ch+g,w:cw,h:ch}],W:cw,H:2*ch+g};
+  if(k===3){const bw=2*cw+g,bh=Math.round(bw*ch/cw);return{r:[{x:0,y:0,w:bw,h:bh},{x:0,y:bh+g,w:cw,h:ch},{x:cw+g,y:bh+g,w:cw,h:ch}],W:bw,H:bh+g+ch}}
+  return{r:[0,1,2,3].map(i=>({x:(i%2)*(cw+g),y:(i>>1)*(ch+g),w:cw,h:ch})),W:2*cw+g,H:2*ch+g};
+}
+async function compose(frames){
+  const k=frames.length,cw=frames[0].width,ch=frames[0].height,g=Math.round(cw*.02),L=layout(k,cw,ch,g),W=L.W;
+  const m=Math.round(W*.035),top=Math.round(W*.12),c=document.createElement('canvas');
+  c.width=W+2*m;c.height=L.H+top+m;const x=c.getContext('2d');
+  x.fillStyle='#0c0c14';x.fillRect(0,0,c.width,c.height);
+  const lw=Math.max(3,W*.004);x.strokeStyle='#c8102e';x.lineWidth=lw;
+  L.r.forEach((r,i)=>{x.drawImage(frames[i],m+r.x,top+r.y,r.w,r.h);x.strokeRect(m+r.x-lw/2,top+r.y-lw/2,r.w+lw,r.h+lw)});
+  const fs=top*.4;x.font=`600 ${fs}px Georgia,serif`;x.textBaseline='middle';x.textAlign='left';
+  if('letterSpacing' in x)x.letterSpacing=(fs*.18)+'px';
+  const parts=[['GRADUA','#fff'],['2','#c8102e'],['S','#fff']],ws=parts.map(p=>x.measureText(p[0]).width);
+  let px=c.width/2-ws.reduce((a,b)=>a+b,0)/2;parts.forEach((p,i)=>{x.fillStyle=p[1];x.fillText(p[0],px,top*.48);px+=ws[i]});
+  if('letterSpacing' in x)x.letterSpacing='0px';
+  x.fillStyle='#c8102e';x.fillRect(c.width/2-W*.04,top*.78,W*.08,lw);
+  if(CFG.framePng){try{x.drawImage(await loadImg(CFG.framePng),0,0,c.width,c.height)}catch(e){}}
+  return c;
+}
+async function toJpeg(c){let q=.93,b;do{b=await new Promise(r=>c.toBlob(r,'image/jpeg',q));q-=.08}while(b.size>4.2e6&&q>.5);return b}
+
+$('go').onclick=async()=>{
+  $('go').disabled=true;lock(true);$('th').innerHTML='';
+  const frames=[];
+  for(let k=0;k<n;k++){
+    $('prog').textContent=n>1?`Foto ${k+1} de ${n}`:'';
+    for(let i=k===0?CFG.countdown:CFG.between;i>0;i--){const cd=$('cd');cd.textContent=i;cd.classList.remove('pop');void cd.offsetWidth;cd.classList.add('pop');await sleep(1000)}
+    $('cd').textContent='';
+    frames.push(grab());                        // el contador es HTML: nunca entra en la foto
+    const f=$('fl');f.classList.remove('on');void f.offsetWidth;f.classList.add('on');
+    if(n>1)$('th').appendChild(thumb(frames[k]));
+    if(k<n-1)await sleep(400);
+  }
+  $('prog').textContent='';show('proc');const t0=Date.now();
+  const blob=await toJpeg(await compose(frames));
+  let link=null;
+  try{
+    const r=await fetch('/api/upload',{method:'POST',headers:{'Content-Type':'image/jpeg'},body:blob});
+    if(!r.ok)throw 0;const j=await r.json();link=location.origin+'/v.html?u='+encodeURIComponent(j.url);
+  }catch(e){}
+  await sleep(Math.max(0,1500-(Date.now()-t0)));
+  showResult(blob,link);
+};
+function showResult(blob,link){
+  if(url)URL.revokeObjectURL(url);url=URL.createObjectURL(blob);
+  $('ph').src=url;$('dl').href=url;
+  const q=$('qr');q.innerHTML='';
+  if(link){q.hidden=false;new QRCode(q,{text:link,width:512,height:512,correctLevel:QRCode.CorrectLevel.M});$('qrmsg').textContent='Escanea el código QR para descargar tu fotografía'}
+  else{q.hidden=true;$('qrmsg').textContent='No se pudo generar el QR (error al subir la foto). Usa DESCARGAR FOTO.'}
+  show('out');let t=CFG.resultSeconds;$('left').textContent=`Disponible ${t} s`;
+  clearInterval(tick);tick=setInterval(()=>{t--;$('left').textContent=`Disponible ${t} s`;if(t<=0)reset()},1000);
+}
+function reset(){
+  clearInterval(tick);show('home');$('go').disabled=!stream;lock(false);$('th').innerHTML='';
+  setTimeout(()=>{$('ph').removeAttribute('src');$('qr').innerHTML=''},600);
+}
+$('again').onclick=reset;
+startCam();
+</script></body></html>
